@@ -9,26 +9,27 @@ public class Mallet : MonoBehaviour
 
     float velocidadTotal = 0;
     private Vector3 posicionAnterior;
+
     void Start()
     {
-        // rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>(); // Asegúrate de descomentar esta línea si necesitas acceder al Rigidbody2D.
         posicionAnterior = transform.position;
     }
 
     void Update()
     {
+        // calcular velocidad
         Vector3 posicionActual = transform.position;
         float tiempoTranscurrido = Time.deltaTime;
         Vector3 velocidad = (posicionActual - posicionAnterior) / tiempoTranscurrido;
         posicionAnterior = posicionActual;
         velocidadTotal = velocidad.magnitude;
 
-
         // Obtener la posición del mouse en pantalla
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         // Convertir la posición del mouse a un rayo en el espacio 3D
-        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         // Crear un RaycastHit para almacenar la información del rayo
         RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
@@ -44,9 +45,33 @@ public class Mallet : MonoBehaviour
 
                 if (isMousePressed)
                 {
-                    transform.position = new Vector3(mousePosition.x, mousePosition.y, transform.position.z);
+                    MoveMallet(mousePosition);
                 }
             }
+        }
+    }
+
+    private void MoveMallet(Vector3 targetPosition)
+    {
+        // Calcular la posición deseada del mallet
+        Vector3 desiredPosition = new Vector3(targetPosition.x, targetPosition.y, transform.position.z);
+
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(desiredPosition, GetComponent<Collider2D>().bounds.extents.x);
+
+        bool canMove = true;
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.gameObject != gameObject && collider.gameObject.name != "puck")
+            {
+                canMove = false;
+                break;
+            }
+        }
+
+        // Mover el mallet solo si no hay colisiones con otros colliders
+        if (canMove)
+        {
+            transform.position = desiredPosition;
         }
     }
 
@@ -55,12 +80,20 @@ public class Mallet : MonoBehaviour
         // Verificar si la colisión es con el objeto controlado por el mouse
         if (collision.gameObject.CompareTag("puck"))
         {
-            GameObject puck = GameObject.FindWithTag("puck");
+            GameObject puck = collision.gameObject;
 
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 direction = ((mousePosition - puck.transform.position) * -1).normalized;
+            Vector2 direction = (puck.transform.position - transform.position).normalized;
 
-            puck.GetComponent<Rigidbody2D>().AddForce(direction * velocidadTotal, ForceMode2D.Impulse);
+            // Ajustar la fuerza aplicada al puck según la velocidad del mallet
+            float forceMultiplier = 2.0f; // Puedes ajustar este valor según sea necesario
+            Vector2 force = forceMultiplier * velocidadTotal * direction;
+            // Limitar la velocidad máxima del puck
+            float maxSpeed = 10.0f; // Ajusta este valor según sea necesario
+            if (force.magnitude > maxSpeed)
+            {
+                force = force.normalized * maxSpeed;
+            }
+            puck.GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);
         }
     }
 }
