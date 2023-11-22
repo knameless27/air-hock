@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Mallet : MonoBehaviour
@@ -61,7 +59,7 @@ public class Mallet : MonoBehaviour
         bool canMove = true;
         foreach (Collider2D collider in colliders)
         {
-            if (collider.gameObject != gameObject && collider.gameObject.name != "puck")
+            if (collider.gameObject != gameObject && !collider.gameObject.CompareTag("puck"))
             {
                 canMove = false;
                 break;

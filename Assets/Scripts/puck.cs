@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class puck : MonoBehaviour
+public class Puck : MonoBehaviour
 {
     int puntuationRight = 0, puntuationLeft = 0;
     private Rigidbody2D rb;
@@ -36,8 +34,17 @@ public class puck : MonoBehaviour
 
     void resetPuck(string side)
     {
-        if (side == "left") transform.position = new Vector3(-02f, 0f, 0f);
-        if (side == "right") transform.position = new Vector3(02f, 0f, 0f);
+        SpecialPuck sp = new SpecialPuck();
+        if (side == "left")
+        {
+            sp.Spawn("left");
+            transform.position = new Vector3(-02f, 0f, 0f);
+        }
+        if (side == "right")
+        {
+            sp.Spawn("right");
+            transform.position = new Vector3(02f, 0f, 0f);
+        }
         // Establecer la velocidad del Rigidbody2D en cero
         rb.velocity = Vector2.zero;
         rb.angularVelocity = 0f; // También puedes establecer la velocidad angular en cero si es relevante
