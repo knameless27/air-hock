@@ -3,14 +3,11 @@ using UnityEngine;
 public class Mallet : MonoBehaviour
 {
     bool isMousePressed = false;
-    private Rigidbody2D rb;
-
     float velocidadTotal = 0;
     private Vector3 posicionAnterior;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>(); // Asegúrate de descomentar esta línea si necesitas acceder al Rigidbody2D.
         posicionAnterior = transform.position;
     }
 

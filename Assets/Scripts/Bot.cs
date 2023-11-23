@@ -24,6 +24,7 @@ public class Bot : MonoBehaviour
                 transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
                 if (Vector2.Distance(transform.position, puck.position) < hitRange) HitPuck();
+                puck = GameObject.FindGameObjectWithTag("puck").transform;
             }
 
             yield return null;

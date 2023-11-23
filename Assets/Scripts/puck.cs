@@ -7,6 +7,7 @@ public class Puck : MonoBehaviour
     private Rigidbody2D rb;
     public TextMeshProUGUI leftText;
     public TextMeshProUGUI rightText;
+    public SpecialPuck sp;
 
     void Start()
     {
@@ -19,22 +20,21 @@ public class Puck : MonoBehaviour
     {
         if (collision.gameObject.name == "goalRight")
         {
-            puntuationRight++;
+            puntuationLeft++;
+            leftText.text = "" + puntuationLeft;
             resetPuck("right");
-            rightText.text = "" + puntuationRight;
         }
         if (collision.gameObject.name == "goalLeft")
         {
-            puntuationLeft++;
+            puntuationRight++;
+            rightText.text = "" + puntuationRight;
             resetPuck("left");
-            leftText.text = "" + puntuationLeft;
         }
 
     }
 
     void resetPuck(string side)
     {
-        SpecialPuck sp = new SpecialPuck();
         if (side == "left")
         {
             sp.Spawn("left");

@@ -2,27 +2,29 @@ using UnityEngine;
 
 public class SpecialPuck : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private Rigidbody2D rb;
+    string[] sexito;
+
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Spawn(string side)
     {
-        
-    }
-
-    public void Spawn(string side) {
+        sexito = new string[] { "biggerMallet", "barrier", "changePositionGoal" };
         gameObject.SetActive(true);
-        if (side == "left")
+
+        if (side == "left") transform.position = new Vector3(-02f, -3f, 0f);
+        if (side == "right") transform.position = new Vector3(02f, -3f, 0f);
+
+        if (rb)
         {
-            transform.position = new Vector3(-02f, 3f, 0f);
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
         }
-        if (side == "right")
-        {
-            transform.position = new Vector3(02f, 3f, 0f);
-        }
+
+        int xd = Random.Range(0, sexito.Length - 1);
+        Debug.Log(xd);
     }
 }
