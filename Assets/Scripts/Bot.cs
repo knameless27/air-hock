@@ -5,13 +5,19 @@ public class Bot : MonoBehaviour
 {
     private Transform puck;
     private Vector2 targetPosition;
-    private float moveSpeed = 10f;
-    private float hitRange = 1f;
+    readonly private float MoveSpeed = 10f;
+    readonly private float HitRange = 1f;
+    public bool IsPlayer = false;
 
     void Start()
     {
         puck = GameObject.FindGameObjectWithTag("puck").transform;
         StartCoroutine("MoveTowardsPuck");
+        if (IsPlayer)
+        {
+            gameObject.AddComponent<Mallet>();
+            Destroy(GetComponent<Bot>());
+        }
     }
 
     IEnumerator MoveTowardsPuck()
@@ -21,9 +27,9 @@ public class Bot : MonoBehaviour
             if (puck.position.x > 0)
             {
                 targetPosition = new Vector2(puck.position.x, puck.position.y);
-                transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, targetPosition, MoveSpeed * Time.deltaTime);
 
-                if (Vector2.Distance(transform.position, puck.position) < hitRange) HitPuck();
+                if (Vector2.Distance(transform.position, puck.position) < HitRange) HitPuck();
                 puck = GameObject.FindGameObjectWithTag("puck").transform;
             }
 

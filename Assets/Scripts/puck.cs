@@ -3,7 +3,7 @@ using TMPro;
 
 public class Puck : MonoBehaviour
 {
-    int puntuationRight = 0, puntuationLeft = 0;
+    readonly int PuntuationRight = 0, PuntuationLeft = 0;
     private Rigidbody2D rb;
     public TextMeshProUGUI leftText;
     public TextMeshProUGUI rightText;
@@ -18,35 +18,40 @@ public class Puck : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.name == "goalRight")
+        if (collision.gameObject.CompareTag("goalRight"))
         {
-            puntuationLeft++;
-            leftText.text = "" + puntuationLeft;
-            resetPuck("right");
+            HandleGoalScored(PuntuationLeft, leftText);
+            ResetPuck("right");
         }
-        if (collision.gameObject.name == "goalLeft")
+        else if (collision.gameObject.CompareTag("goalLeft"))
         {
-            puntuationRight++;
-            rightText.text = "" + puntuationRight;
-            resetPuck("left");
+            HandleGoalScored(PuntuationRight, rightText);
+            ResetPuck("left");
         }
-
     }
 
-    void resetPuck(string side)
+    private void HandleGoalScored(int score, TextMeshProUGUI scoreText)
     {
-        if (side == "left")
-        {
-            sp.Spawn("left");
-            transform.position = new Vector3(-02f, 0f, 0f);
-        }
-        if (side == "right")
-        {
-            sp.Spawn("right");
-            transform.position = new Vector3(02f, 0f, 0f);
-        }
-        // Establecer la velocidad del Rigidbody2D en cero
+        score++;
+        scoreText.text = score.ToString();
+    }
+
+
+    void ResetPuck(string side)
+    {
+        sp.SetBarrier("left", false);
+        sp.SetBarrier("right", false);
+
+        GameObject malletR = GameObject.FindGameObjectWithTag("malletRight");
+        GameObject malletL = GameObject.FindGameObjectWithTag("malletLeft");
+
+        malletR.transform.localScale = Vector3.one;
+        malletL.transform.localScale = Vector3.one;
+
+        sp.Spawn(side);
+        transform.position = new Vector3(side == "left" ? -2f : 2f, 0f, 0f);
+
         rb.velocity = Vector2.zero;
-        rb.angularVelocity = 0f; // También puedes establecer la velocidad angular en cero si es relevante
+        rb.angularVelocity = 0f;
     }
 }

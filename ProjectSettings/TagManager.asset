@@ -8,6 +8,10 @@ TagManager:
   - goalLeft
   - goalRight
   - wall
+  - malletRight
+  - malletLeft
+  - barrierLeft
+  - barrierRight
   layers:
   - Default
   - TransparentFX
