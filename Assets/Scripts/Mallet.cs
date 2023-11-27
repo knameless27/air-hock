@@ -19,15 +19,12 @@ public class Mallet : MonoBehaviour
         Vector3 velocidad = (posicionActual - posicionAnterior) / tiempoTranscurrido;
         posicionAnterior = posicionActual;
         velocidadTotal = velocidad.magnitude;
-
         // Obtener la posición del mouse en pantalla
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        // Obtén la posición del mouse en el mundo 2D
+Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        // Convertir la posición del mouse a un rayo en el espacio 3D
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        // Crear un RaycastHit para almacenar la información del rayo
-        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+// Crea un rayo desde la posición de la cámara hacia la posición del mouse
+RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
 
         // Verificar si el rayo intersecta con un collider
         if (hit.collider != null)
