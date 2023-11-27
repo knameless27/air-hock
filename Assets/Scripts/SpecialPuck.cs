@@ -21,7 +21,6 @@ public class SpecialPuck : MonoBehaviour
     private void ActivatePower(string side)
     {
         int index = Random.Range(0, Powers.Length);
-        Debug.Log(index);
 
         string oppositeSide = (side == "Left") ? "Right" : "Left";
 
