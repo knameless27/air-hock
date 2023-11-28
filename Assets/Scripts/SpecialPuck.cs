@@ -5,11 +5,29 @@ public class SpecialPuck : MonoBehaviour
     private Rigidbody2D rb;
     public GameObject BarrierLeft;
     public GameObject BarrierRight;
-    public string[] Powers = { "biggerMallet", "barrier" };
+    public float velocidadCambioColor = 0.2f;
+    public float umbralColorOscuro = 0.2f;
+    private SpriteRenderer spriteRenderer;
+    private string[] Powers = { "biggerMallet", "barrier" };
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void Update()
+    {
+        Color nuevoColor = new Color(Mathf.Sin(Time.time * velocidadCambioColor),
+                                    Mathf.Cos(Time.time * velocidadCambioColor),
+                                    Mathf.Tan(Time.time * velocidadCambioColor));
+
+        nuevoColor.r = Mathf.Max(nuevoColor.r, umbralColorOscuro);
+        nuevoColor.g = Mathf.Max(nuevoColor.g, umbralColorOscuro);
+        nuevoColor.b = Mathf.Max(nuevoColor.b, umbralColorOscuro);
+
+        // Aplica el nuevo color al material del objeto
+        spriteRenderer.color = nuevoColor;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

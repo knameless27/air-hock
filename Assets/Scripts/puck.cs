@@ -1,9 +1,9 @@
 using UnityEngine;
 using TMPro;
+using System;
 
 public class Puck : MonoBehaviour
 {
-    readonly int PuntuationRight = 0, PuntuationLeft = 0;
     private Rigidbody2D rb;
     public TextMeshProUGUI leftText;
     public TextMeshProUGUI rightText;
@@ -20,20 +20,19 @@ public class Puck : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("goalRight"))
         {
-            HandleGoalScored(PuntuationLeft, leftText);
+            HandleGoalScored(leftText);
             ResetPuck("right");
         }
         else if (collision.gameObject.CompareTag("goalLeft"))
         {
-            HandleGoalScored(PuntuationRight, rightText);
+            HandleGoalScored(rightText);
             ResetPuck("left");
         }
     }
 
-    private void HandleGoalScored(int score, TextMeshProUGUI scoreText)
+    private void HandleGoalScored(TextMeshProUGUI scoreText)
     {
-        score++;
-        scoreText.text = score.ToString();
+        scoreText.text = (Convert.ToInt32(scoreText.text) + 1).ToString();
     }
 
 
