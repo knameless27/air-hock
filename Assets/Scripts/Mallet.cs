@@ -2,48 +2,46 @@ using UnityEngine;
 
 public class Mallet : MonoBehaviour
 {
-    bool isMousePressed = false;
+    bool isTouchPressed = false;
     float velocidadTotal = 0;
     private Vector3 posicionAnterior;
-    private ParticleSystem particles;
 
     void Start()
     {
         posicionAnterior = transform.position;
-        particles = GetComponent<ParticleSystem>();
-        particles.Stop();
     }
 
     void Update()
     {
-        // calcular velocidad
+        // Calcular velocidad
         Vector3 posicionActual = transform.position;
         float tiempoTranscurrido = Time.deltaTime;
         Vector3 velocidad = (posicionActual - posicionAnterior) / tiempoTranscurrido;
         posicionAnterior = posicionActual;
         velocidadTotal = velocidad.magnitude;
 
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
-
-        if (hit.collider != null)
+        // Verificar toques en la pantalla
+        if (Input.touchCount > 0)
         {
-            if (hit.collider.gameObject == gameObject)
-            {
-                if (Input.GetMouseButtonDown(0)) isMousePressed = true;
-                if (Input.GetMouseButtonUp(0)) isMousePressed = false;
+            Touch touch = Input.GetTouch(0);
 
-                if (isMousePressed)
-                {
-                    MoveMallet(mousePosition);
-                    if (velocidadTotal > 0.1f)
+            Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
+
+            RaycastHit2D hit = Physics2D.Raycast(touchPosition, Vector2.zero);
+
+            // if (hit.collider != null)
+            // {
+            //     if (hit.collider.gameObject == gameObject)
+            //     {
+                    if (touch.phase == TouchPhase.Began) isTouchPressed = true;
+                    if (touch.phase == TouchPhase.Ended) isTouchPressed = false;
+
+                    if (isTouchPressed)
                     {
-                        particles.Play();
+                        MoveMallet(touchPosition);
                     }
-                }
-                else particles.Stop();
-            }
+            //     }
+            // }
         }
     }
 
@@ -79,7 +77,7 @@ public class Mallet : MonoBehaviour
 
             float forceMultiplier = 2.0f;
             Vector2 force = forceMultiplier * velocidadTotal * direction;
-            
+
             float maxSpeed = 10.0f;
             if (force.magnitude > maxSpeed)
             {
