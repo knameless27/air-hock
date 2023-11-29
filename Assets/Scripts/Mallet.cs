@@ -5,10 +5,13 @@ public class Mallet : MonoBehaviour
     bool isMousePressed = false;
     float velocidadTotal = 0;
     private Vector3 posicionAnterior;
+    private ParticleSystem particles;
 
     void Start()
     {
         posicionAnterior = transform.position;
+        particles = GetComponent<ParticleSystem>();
+        particles.Stop();
     }
 
     void Update()
@@ -19,17 +22,13 @@ public class Mallet : MonoBehaviour
         Vector3 velocidad = (posicionActual - posicionAnterior) / tiempoTranscurrido;
         posicionAnterior = posicionActual;
         velocidadTotal = velocidad.magnitude;
-        // Obtener la posición del mouse en pantalla
-        // Obtén la posición del mouse en el mundo 2D
-Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-// Crea un rayo desde la posición de la cámara hacia la posición del mouse
-RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        // Verificar si el rayo intersecta con un collider
+        RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+
         if (hit.collider != null)
         {
-            // Verificar si el collider pertenece al objeto que tiene este script
             if (hit.collider.gameObject == gameObject)
             {
                 if (Input.GetMouseButtonDown(0)) isMousePressed = true;
@@ -38,14 +37,18 @@ RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
                 if (isMousePressed)
                 {
                     MoveMallet(mousePosition);
+                    if (velocidadTotal > 0.1f)
+                    {
+                        particles.Play();
+                    }
                 }
+                else particles.Stop();
             }
         }
     }
 
     private void MoveMallet(Vector3 targetPosition)
     {
-        // Calcular la posición deseada del mallet
         Vector3 desiredPosition = new Vector3(targetPosition.x, targetPosition.y, transform.position.z);
 
         Collider2D[] colliders = Physics2D.OverlapCircleAll(desiredPosition, GetComponent<Collider2D>().bounds.extents.x);
@@ -60,7 +63,6 @@ RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
             }
         }
 
-        // Mover el mallet solo si no hay colisiones con otros colliders
         if (canMove)
         {
             transform.position = desiredPosition;
@@ -69,18 +71,16 @@ RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Verificar si la colisión es con el objeto controlado por el mouse
         if (collision.gameObject.CompareTag("puck"))
         {
             GameObject puck = collision.gameObject;
 
             Vector2 direction = (puck.transform.position - transform.position).normalized;
 
-            // Ajustar la fuerza aplicada al puck según la velocidad del mallet
-            float forceMultiplier = 2.0f; // Puedes ajustar este valor según sea necesario
+            float forceMultiplier = 2.0f;
             Vector2 force = forceMultiplier * velocidadTotal * direction;
-            // Limitar la velocidad máxima del puck
-            float maxSpeed = 10.0f; // Ajusta este valor según sea necesario
+            
+            float maxSpeed = 10.0f;
             if (force.magnitude > maxSpeed)
             {
                 force = force.normalized * maxSpeed;
